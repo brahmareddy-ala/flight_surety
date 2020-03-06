@@ -1,0 +1,10 @@
+{
+	"localhost": {
+		"url": "http://localhost:7545",
+		"dataAddress": "0xf5b0C056E61CAAFcDc7742894712FD1a4714136A",
+		"appAddress": "0x50440f18936A704CEbeD340e3A4F945134861819",
+		"firstAirline": "0x7f227b6c4A675A1E4a2266C9E3b95E06c9dAf1A0",
+		"oracleInitialIndex": 11,
+		"oracleLasIndex": 30
+	}
+}
