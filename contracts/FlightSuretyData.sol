@@ -23,10 +23,12 @@ contract FlightSuretyData {
     uint256 private airlinesCount = 0;
     mapping(address => Airline) private registeredAirlines;    
     mapping(address => uint256) private multiParty;
-    mapping(address => address) private votedAddress;
+    mapping(address => address) private votedAirlines;
 
     mapping(bytes32 => address[]) private flightInsurees;
     mapping(address => uint256) private insureesBalance;
+
+    mapping(address => bool) private authorizedContracts;
     
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -71,6 +73,12 @@ contract FlightSuretyData {
 
     modifier requireAppContractOwner() {
         require(msg.sender == appContractOwner, "Caller is not App contract owner");
+        _;
+    }
+
+    modifier requireIsAuthorized()
+    {
+        require(authorizedContracts[msg.sender], "(data contract) Caller is not authorized");
         _;
     }
 
@@ -136,27 +144,27 @@ contract FlightSuretyData {
     function registerAirline(address airline, string calldata name, address applicantAirline)
             external requireIsOperational requireAppContractOwner
                      requireRegistredAirline(airline) requireFundedAirline(airline) {
-        if(airlinesCount > airlinesThreshold)
+        if(airlinesCount < airlinesThreshold)
         {
-            require(!(votedAddress[airline] == applicantAirline), "The airline is already voted to applicantAirline");
-            multiParty[applicantAirline] += 1;
-            votedAddress[airline] = applicantAirline;
-            if(airlinesCount.mod(multiParty[applicantAirline]) == 0)
-            {
-                _registerAirline(applicantAirline, name);
-                delete multiParty[applicantAirline];
-                delete votedAddress[airline];
-            }
+            _registerAirline(applicantAirline, name);
         }
         else
         {
-            _registerAirline(airline, name);
+            require(!(votedAirlines[airline] == applicantAirline), "The airline is already voted to applicantAirline");
+            multiParty[applicantAirline] += 1;
+            votedAirlines[airline] = applicantAirline;
+            if(airlinesCount.mod(multiParty[applicantAirline]) == 0 && multiParty[applicantAirline] != 1)
+            {
+                _registerAirline(applicantAirline, name);
+                delete multiParty[applicantAirline];
+                delete votedAirlines[airline];
+            }            
         }
     }
 
     function _registerAirline(address airlineAddr, string memory name) private {
         Airline memory airline = Airline(name, true, 0);
-        airlinesCount++;
+        airlinesCount = airlinesCount + 1;
         registeredAirlines[airlineAddr] = airline;
     }
 
@@ -164,11 +172,10 @@ contract FlightSuretyData {
     * @dev Buy insurance for a flight
     *
     */
-    function buy(address airline, string calldata flight, uint256 timestamp, address insuree)
+    function buy(address airline, string calldata flight, uint256 timestamp, address payable insuree)
             external payable requireIsOperational requireAppContractOwner {
 
         require(msg.value <= (1 ether), "Insufficient Funds");
-        address(this).transfer(msg.value);
 
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         flightInsurees[flightKey].push(insuree);
@@ -206,10 +213,10 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */
-    function fund(address airline, uint256 value) external view requireIsOperational requireAppContractOwner
+    function fund(address airline, uint256 value) external requireIsOperational requireAppContractOwner
     requireRegistredAirline(airline)
     {
-        registeredAirlines[airline].funds.add(value);
+        registeredAirlines[airline].funds = registeredAirlines[airline].funds.add(value);
     }
 
     function getFlightKey(address airline, string memory flight, uint256 timestamp) internal pure returns(bytes32)
@@ -227,7 +234,7 @@ contract FlightSuretyData {
     function getAirline(address airlineAddress) external view requireIsOperational requireAppContractOwner
                 returns(string memory, bool, uint) {
         Airline memory airline = registeredAirlines[airlineAddress];
-        return(airline.name, airline.isRegistered, airline.funds);
+        return (airline.name, airline.isRegistered, airline.funds);
     }
 
     /**
