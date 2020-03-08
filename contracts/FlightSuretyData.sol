@@ -172,10 +172,10 @@ contract FlightSuretyData {
     * @dev Buy insurance for a flight
     *
     */
-    function buy(address airline, string calldata flight, uint256 timestamp, address payable insuree)
+    function buy(address airline, string calldata flight, uint256 timestamp, address insuree)
             external payable requireIsOperational requireAppContractOwner {
 
-        require(msg.value <= (1 ether), "Insufficient Funds");
+        require(msg.value <= (1 ether), "Value should be less than or equals to one ether");
 
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         flightInsurees[flightKey].push(insuree);
@@ -200,9 +200,9 @@ contract FlightSuretyData {
      *  @dev Transfers eligible payout funds to insuree
      *
     */
-    function pay(address payable insuree) external payable requireIsOperational requireAppContractOwner
+    function pay(address payable insuree) external requireIsOperational requireAppContractOwner
     {
-        require(insureesBalance[insuree] > 0, "This insuree has no balance.");
+        require(insureesBalance[insuree] > 0, "Insuree has no balance.");
         uint256 value = insureesBalance[insuree];
         insureesBalance[insuree] = 0;
         insuree.transfer(value);
@@ -213,7 +213,7 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */
-    function fund(address airline, uint256 value) external requireIsOperational requireAppContractOwner
+    function fund(address airline, uint256 value) external payable requireIsOperational requireAppContractOwner
     requireRegistredAirline(airline)
     {
         registeredAirlines[airline].funds = registeredAirlines[airline].funds.add(value);

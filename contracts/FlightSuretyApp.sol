@@ -118,7 +118,7 @@ contract FlightSuretyApp {
     *
     */
     function processFlightStatus(address airline, string memory flight, uint256 timestamp, uint8 statusCode)
-    internal
+    public
     {
         if (statusCode == STATUS_CODE_LATE_AIRLINE) {
             flightSuretyData.creditInsurees(airline, flight, timestamp, payableValue);
@@ -146,7 +146,7 @@ contract FlightSuretyApp {
      *  @dev Transfers eligible payout funds to insuree
      *
     */
-    function withdraw() external payable requireIsOperational {
+    function withdraw() external requireIsOperational {
         flightSuretyData.pay(msg.sender);
     }
 
@@ -155,7 +155,7 @@ contract FlightSuretyApp {
      *      airline fund control variable.
      */
     function fund() external payable requireIsOperational {
-        flightSuretyData.fund(msg.sender, msg.value);
+        flightSuretyData.fund.value(msg.value)(msg.sender, msg.value);
     }
 
     function getAirline(address airlineAddress) external view returns(string memory, bool, uint)
@@ -295,7 +295,7 @@ abstract contract FlightSuretyData {
     function registerAirline(address, string calldata, address) external virtual;
     function creditInsurees(address, string calldata, uint256, uint256) external virtual;
     function buy(address, string calldata, uint256, address) external payable virtual;
-    function pay(address payable) external payable virtual;
+    function pay(address payable) external virtual;
     function fund(address, uint256) external payable virtual;
     function getAirline(address) external view virtual returns(string memory, bool, uint);
 }
