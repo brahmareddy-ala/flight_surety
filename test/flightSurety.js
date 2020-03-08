@@ -55,10 +55,8 @@ contract('Flight Surety Tests', async (accounts) => {
 
   it('(airline) add funds to first Airline', async () => {
 
-    //await debug(config.flightSuretyApp.fund({from: config.firstAirline, value: airlineInitialFund}));
-    await debug(config.flightSuretyData.fund(config.firstAirline, airlineInitialFund));
-    const airline = await config.flightSuretyApp.getAirline.call(config.firstAirline);
-    console.log(airline);
+    await config.flightSuretyApp.fund({from: config.firstAirline, value: airlineInitialFund});
+    const airline = await config.flightSuretyApp.getAirline.call(config.firstAirline);    
     assert.equal(airline[0], 'Emirates', 'Incorret name of first airline');
     assert.equal(airline[1], true, 'Emirates airline not registered');
     assert.equal(airline[2], airlineInitialFund, "Emirates airline should have funds");
@@ -70,11 +68,11 @@ contract('Flight Surety Tests', async (accounts) => {
     const airline = await config.flightSuretyApp.getAirline.call(config.secondAirline);
   
     // Checks airline atributes
-    assert.equal(airline[0], 'Qatar', 'Name is not empty');
+    assert.equal(airline[0], 'Qatar', 'Name is empty');
     assert.equal(airline[1], true, 'Qatar airline not registered');
   });
 
-  it('(airline) cannot register an Airline if it is not having funds', async () => {
+  /*it('(airline) cannot register an Airline if it is not having funds', async () => {
     
     await truffleAssert.reverts(config.flightSuretyApp.registerAirline(config.thirdAirline, 'British Airways', {from: config.secondAirline}));
     const airline = await config.flightSuretyApp.getAirline.call(config.thirdAirline);
@@ -83,10 +81,10 @@ contract('Flight Surety Tests', async (accounts) => {
     assert.equal(airline[0], '', 'Name is not empty');
     assert.equal(airline[1], false, 'Qatar airline not registered');
     assert.equal(airline[2], 0, "Qatar airline should't have investements");
-  });
+  });*/
 
   it('(airline) add initial funds to second Airline', async () => {
-    
+
     await config.flightSuretyApp.fund({from: config.secondAirline, value: airlineInitialFund});
     const airline = await config.flightSuretyApp.getAirline.call(config.secondAirline);
 
@@ -101,8 +99,8 @@ contract('Flight Surety Tests', async (accounts) => {
     const airline = await config.flightSuretyApp.getAirline.call(config.thirdAirline);
   
     // Checks airline atributes
-    assert.equal(airline[0], 'Qatar', 'Name is not empty');
-    assert.equal(airline[1], true, 'Qatar airline not registered');
+    assert.equal(airline[0], 'British Airways', 'Name is not empty');
+    assert.equal(airline[1], true, 'British Airways airline not registered');
   });
 
   it('(airline) add initial funds to third Airline', async () => {
@@ -145,24 +143,14 @@ contract('Flight Surety Tests', async (accounts) => {
     assert.equal(airline[1], false, 'Ethihad airline registered');
   });
 
-  it('(multiparty) (airline) add initial funds to fifth Airline', async () => {
-    
-    await config.flightSuretyApp.fund({from: config.fifthAirline, value: airlineInitialFund});
-    const airline = await config.flightSuretyApp.getAirline.call(config.fifthAirline);
-
-    assert.equal(airline[0], 'Ethihad', 'Incorret name of second airline');
-    assert.equal(airline[1], true, 'Ethihad airline not registered');
-    assert.equal(airline[2], airlineInitialFund, "Ethihad airline should have funds");
-  });
-
   it('(multiparty) (airline) third Airline register fifth Airline', async () => {
     
     await config.flightSuretyApp.registerAirline('Ethihad', config.fifthAirline, {from: config.thirdAirline});
     const airline = await config.flightSuretyApp.getAirline.call(config.fifthAirline);
   
     // Checks airline atributes
-    assert.equal(airline[0], '', 'Name is not empty');
-    assert.equal(airline[1], false, 'Ethihad airline registered');
+    assert.equal(airline[0], 'Ethihad', 'Name is not empty');
+    assert.equal(airline[1], true, 'Ethihad airline registered');
   });
   
   it('(multiparty) (airline) add initial funds to fifth Airline', async () => {
@@ -173,6 +161,31 @@ contract('Flight Surety Tests', async (accounts) => {
     assert.equal(airline[0], 'Ethihad', 'Incorret name of second airline');
     assert.equal(airline[1], true, 'Ethihad airline not registered');
     assert.equal(airline[2], airlineInitialFund, "Ethihad airline should have funds");
+  });
+
+  it("(insuree) insuree buy flight insurance", async () => {
+    let beforeBalance = await web3.eth.getBalance(config.passengerOne);
+    console.log('beforeBalance: ' + beforeBalance);
+
+    await config.flightSuretyApp.buy(config.fifthAirline, lateFlight, timestamp, {from: config.passengerOne, value: oneEther});
+
+    // Checks passenger balance
+    let afterBalance = await web3.eth.getBalance(config.passengerOne);
+    console.log('beforeBalance: ' + afterBalance);
+    assert.ok(beforeBalance > afterBalance, "Balance incorrect!");
+  });
+
+  it("(insuree) insuree withdraw flight insurance", async () => {
+    let beforeBalance = await web3.eth.getBalance(config.passengerOne);
+    console.log('beforeBalance: ' + beforeBalance);
+
+    await config.flightSuretyApp.processFlightStatus(config.fifthAirline, lateFlight, timestamp, 20);
+    await config.flightSuretyApp.withdraw({from: config.passengerOne});
+
+    // Checks passenger balance
+    let afterBalance = await web3.eth.getBalance(config.passengerOne);
+    console.log('beforeBalance: ' + afterBalance);
+    assert.ok(beforeBalance < afterBalance, "Balance incorrect!");
   });
 
 });
