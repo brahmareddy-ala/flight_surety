@@ -190,7 +190,7 @@ contract FlightSuretyData {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         for (uint256 i = 0; i < flightInsurees[flightKey].length; i++) {
             uint256 currentBalance = insureesBalance[flightInsurees[flightKey][i]];
-            uint256 newBalance = currentBalance.mul(payableValue);
+            uint256 newBalance = currentBalance.mul((uint256(3).div(uint256(2))));
             insureesBalance[flightInsurees[flightKey][i]] = newBalance;
         }
         delete flightInsurees[flightKey];
@@ -200,7 +200,7 @@ contract FlightSuretyData {
      *  @dev Transfers eligible payout funds to insuree
      *
     */
-    function pay(address payable insuree) external requireIsOperational requireAppContractOwner
+    function withdraw(address payable insuree) external requireIsOperational requireAppContractOwner
     {
         require(insureesBalance[insuree] > 0, "Insuree has no balance.");
         uint256 value = insureesBalance[insuree];
@@ -235,6 +235,12 @@ contract FlightSuretyData {
                 returns(string memory, bool, uint) {
         Airline memory airline = registeredAirlines[airlineAddress];
         return (airline.name, airline.isRegistered, airline.funds);
+    }
+    
+    function getInsureeBalance(address insuree) external view requireIsOperational
+    returns(uint256)
+    {
+        return insureesBalance[insuree];
     }
 
     /**

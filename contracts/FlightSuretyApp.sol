@@ -147,7 +147,7 @@ contract FlightSuretyApp {
      *
     */
     function withdraw() external requireIsOperational {
-        flightSuretyData.pay(msg.sender);
+        flightSuretyData.withdraw(msg.sender);
     }
 
     /**
@@ -295,7 +295,7 @@ abstract contract FlightSuretyData {
     function registerAirline(address, string calldata, address) external virtual;
     function creditInsurees(address, string calldata, uint256, uint256) external virtual;
     function buy(address, string calldata, uint256, address) external payable virtual;
-    function pay(address payable) external virtual;
+    function withdraw(address payable) external virtual;
     function fund(address, uint256) external payable virtual;
     function getAirline(address) external view virtual returns(string memory, bool, uint);
 }
