@@ -172,17 +172,11 @@ contract('Flight Surety Tests', async (accounts) => {
   });
 
   it("(insuree) insuree withdraw flight insurance", async () => {
-    let beforeBalance = await web3.eth.getBalance(config.passengerOne);
-    console.log('beforeBalance: ' + beforeBalance);
-
+    let beforeBalance = await web3.eth.getBalance(config.passengerOne);    
     await config.flightSuretyApp.processFlightStatus(config.fifthAirline, lateFlight, timestamp, 20);
-    const balance = await config.flightSuretyData.getInsureeBalance(config.passengerOne);
-    console.log(web3.utils.fromWei(balance, "ether"));
     await config.flightSuretyApp.withdraw({from: config.passengerOne});
-
     // Checks passenger balance
     let afterBalance = await web3.eth.getBalance(config.passengerOne);
-    console.log('afterBalance: ' + afterBalance);
     assert.ok(beforeBalance < afterBalance, "Balance incorrect!");
   });
 
