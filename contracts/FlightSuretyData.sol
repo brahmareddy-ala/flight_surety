@@ -185,12 +185,12 @@ contract FlightSuretyData {
     /**
      *  @dev Credits payouts to insurees
     */
-    function creditInsurees(address airline, string calldata flight, uint256 timestamp, uint256 payableValue)
+    function creditInsurees(address airline, string calldata flight, uint256 timestamp, uint256 numerator, uint256 denominator)
             external requireIsOperational requireAppContractOwner {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         for (uint256 i = 0; i < flightInsurees[flightKey].length; i++) {
             uint256 currentBalance = insureesBalance[flightInsurees[flightKey][i]];
-            uint256 newBalance = currentBalance.mul((uint256(3).div(uint256(2))));
+            uint256 newBalance = currentBalance.mul(numerator).div(denominator);
             insureesBalance[flightInsurees[flightKey][i]] = newBalance;
         }
         delete flightInsurees[flightKey];
@@ -222,13 +222,6 @@ contract FlightSuretyData {
     function getFlightKey(address airline, string memory flight, uint256 timestamp) internal pure returns(bytes32)
     {
         return keccak256(abi.encodePacked(airline, flight, timestamp));
-    }
-
-    /**
-     * @dev Check Airline existance
-     */
-    function airlineExists(address airline) external view requireIsOperational requireAppContractOwner returns (bool) {
-        return registeredAirlines[airline].isRegistered;
     }
 
     function getAirline(address airlineAddress) external view requireIsOperational requireAppContractOwner

@@ -36,7 +36,8 @@ contract FlightSuretyApp {
     }
     mapping(bytes32 => Flight) private flights;*/
 
-    uint256 private constant payableValue = 1.5 ether;
+    uint256 private constant numerator = 3;
+    uint256 private constant denominator = 2;
 
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
@@ -121,7 +122,7 @@ contract FlightSuretyApp {
     public
     {
         if (statusCode == STATUS_CODE_LATE_AIRLINE) {
-            flightSuretyData.creditInsurees(airline, flight, timestamp, payableValue);
+            flightSuretyData.creditInsurees(airline, flight, timestamp, numerator, denominator);
         }
     }
 
@@ -161,6 +162,11 @@ contract FlightSuretyApp {
     function getAirline(address airlineAddress) external view returns(string memory, bool, uint)
     {
         return flightSuretyData.getAirline(airlineAddress);
+    }
+
+    function getInsureeBalance() external view returns(uint256)
+    {
+        return flightSuretyData.getInsureeBalance(msg.sender);
     }
 
 // region ORACLE MANAGEMENT
@@ -232,7 +238,6 @@ contract FlightSuretyApp {
         require((oracles[msg.sender].indexes[0] == index) || (oracles[msg.sender].indexes[1] == index) ||
         (oracles[msg.sender].indexes[2] == index), "Index does not match oracle request");
 
-
         bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp));
         require(oracleResponses[key].isOpen, "Flight or timestamp do not match oracle request");
 
@@ -243,11 +248,16 @@ contract FlightSuretyApp {
         emit OracleReport(airline, flight, timestamp, statusCode);
         if (oracleResponses[key].responses[statusCode].length >= MIN_RESPONSES) {
 
+            oracleResponses[key].isOpen = false;
+
             emit FlightStatusInfo(airline, flight, timestamp, statusCode);
 
             // Handle flight status as appropriate
             processFlightStatus(airline, flight, timestamp, statusCode);
         }
+        /*else {
+            emit FlightStatusInfo(airline, flight, timestamp, statusCode);
+        }*/
     }
 
     function getFlightKey(address airline, string memory flight, uint256 timestamp) internal pure returns(bytes32)
@@ -293,9 +303,10 @@ contract FlightSuretyApp {
 abstract contract FlightSuretyData {
     function isOperational() external virtual returns(bool);
     function registerAirline(address, string calldata, address) external virtual;
-    function creditInsurees(address, string calldata, uint256, uint256) external virtual;
+    function creditInsurees(address, string calldata, uint256, uint256, uint256) external virtual;
     function buy(address, string calldata, uint256, address) external payable virtual;
     function withdraw(address payable) external virtual;
     function fund(address, uint256) external payable virtual;
     function getAirline(address) external view virtual returns(string memory, bool, uint);
+    function getInsureeBalance(address) external view virtual returns(uint256);
 }
