@@ -168,16 +168,16 @@ contract('Flight Surety Tests', async (accounts) => {
     await config.flightSuretyApp.buy(config.fifthAirline, lateFlight, timestamp, {from: config.passengerOne, value: oneEther, gasPrice:0});
     // Checks passenger balance
     let afterBalance = await web3.eth.getBalance(config.passengerOne);
-    assert.ok(beforeBalance > afterBalance, "Balance incorrect!");
+    assert(parseInt(beforeBalance) > parseInt(afterBalance), "Balance incorrect!");
   });
 
   it("(insuree) insuree withdraw flight insurance", async () => {
-    let beforeBalance = await web3.eth.getBalance(config.passengerOne);    
+    let beforeBalance = await web3.eth.getBalance(config.passengerOne);
     await config.flightSuretyApp.processFlightStatus(config.fifthAirline, lateFlight, timestamp, 20);
     await config.flightSuretyApp.withdraw({from: config.passengerOne});
     // Checks passenger balance
     let afterBalance = await web3.eth.getBalance(config.passengerOne);
-    assert.ok(beforeBalance < afterBalance, "Balance incorrect!");
+    assert(parseInt(beforeBalance) < parseInt(afterBalance), "Balance incorrect!");
   });
 
 });
