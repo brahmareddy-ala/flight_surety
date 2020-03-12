@@ -1,7 +1,7 @@
 body {
     background-image: url('flight.jpg'); /* Source: iStockPhoto */
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-repeat: round;
+    background-size: auto;
 }
 
 .container {
@@ -14,6 +14,11 @@ body {
 
 .top-20 {
     margin-top: 20px;
+}
+
+.top-21 {
+    margin-top: 20px;
+    margin-left: 120px;
 }
 
 h5 {
