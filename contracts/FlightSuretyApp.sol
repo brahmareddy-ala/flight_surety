@@ -140,7 +140,7 @@ contract FlightSuretyApp {
 
     function buy(address airline, string calldata flight, uint256 timestamp) external payable requireIsOperational
     {
-        flightSuretyData.buy.value(msg.value)(airline, flight, timestamp, msg.sender);
+        flightSuretyData.buy{value:msg.value}(airline, flight, timestamp, msg.sender);
     }
 
     /**
@@ -156,7 +156,7 @@ contract FlightSuretyApp {
      *      airline fund control variable.
      */
     function fund() external payable requireIsOperational {
-        flightSuretyData.fund.value(msg.value)(msg.sender, msg.value);
+        flightSuretyData.fund{value:msg.value}(msg.sender, msg.value);
     }
 
     function getAirline(address airlineAddress) external view returns(string memory, bool, uint)
