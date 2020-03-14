@@ -17,7 +17,7 @@ let oracleRegistered = false;
 web3.eth.getAccounts().then((result) => {
   web3.eth.defaultAccount = result[0];
   accounts = result;
-});
+
 
 function getRandomStatus() {
   const randomIndex = Math.floor(Math.random() * 6);
@@ -57,21 +57,22 @@ flightSuretyApp.events.OracleRequest({
 
         for(let a = oracleInitialIndex; a <= oracleLastIndex; a++) {
           flightSuretyApp.methods.getMyIndexes().call({from: accounts[a]}).then((result) => {
-            console.log(result);
             if(result) {
-            for (let i = 0; i < result.length; i++) {
-              if (result[i] == index) {
-                flightSuretyApp.methods
-                    .submitOracleResponse(index, airline, flight, timestamp, flightStatus)
-                    .send({from: accounts[a], gas: config.gas}).then((error, result) => {
-                });
+              for (let i = 0; i < result.length; i++) {
+                if (result[i] == index) {
+                  flightSuretyApp.methods
+                      .submitOracleResponse(index, airline, flight, timestamp, flightStatus)
+                      .send({from: accounts[a], gas: config.gas}).then((result) => {
+                  }).catch((error) => {null});
+                }
               }
             }
-          }
           });
         }
       }
     }
+});
+
 });
 
 const app = express();
