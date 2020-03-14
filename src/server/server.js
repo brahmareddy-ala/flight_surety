@@ -62,8 +62,8 @@ flightSuretyApp.events.OracleRequest({
                 if (result[i] == index) {
                   flightSuretyApp.methods
                       .submitOracleResponse(index, airline, flight, timestamp, flightStatus)
-                      .send({from: accounts[a], gas: config.gas}).then((result) => {
-                  }).catch((error) => {null});
+                      .send({from: accounts[a], gas: config.gas}).then((res) => {
+                      }).catch((error) => {null});
                 }
               }
             }
@@ -71,6 +71,16 @@ flightSuretyApp.events.OracleRequest({
         }
       }
     }
+});
+
+flightSuretyApp.events.FlightStatusInfo({
+  fromBlock: 0
+}, (error, event) => {
+  if (error) console.log(error)
+    console.log("Airline: " + event.returnValues.airline);
+    console.log("Flight: " + event.returnValues.flight);
+    console.log("Timestamp: " + event.returnValues.timestamp);
+    console.log("Status Code: " + event.returnValues.status)
 });
 
 });
