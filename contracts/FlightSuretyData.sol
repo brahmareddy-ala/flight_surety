@@ -15,6 +15,11 @@ contract FlightSuretyData {
         uint256 funds;
     }
 
+    struct Insuree {
+        bool isCredited;
+        uint256 balance;
+    }
+
     address private contractOwner;
     address private appContractOwner;
     bool private operational = true;
@@ -26,7 +31,7 @@ contract FlightSuretyData {
     mapping(address => address) private votedAirlines;
 
     mapping(bytes32 => address[]) private flightInsurees;
-    mapping(address => uint256) private insureesBalance;
+    mapping(address => Insuree) private insureesBalance;
 
     mapping(address => bool) private authorizedContracts;
     
@@ -179,7 +184,8 @@ contract FlightSuretyData {
 
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
         flightInsurees[flightKey].push(insuree);
-        insureesBalance[insuree] = msg.value;
+        Insuree memory insureeStuct = Insuree(false, msg.value);
+        insureesBalance[insuree] = insureeStuct;
     }
 
     /**
@@ -188,10 +194,14 @@ contract FlightSuretyData {
     function creditInsurees(address airline, string calldata flight, uint256 timestamp, uint256 numerator, uint256 denominator)
             external requireIsOperational requireAppContractOwner {
         bytes32 flightKey = getFlightKey(airline, flight, timestamp);
+        Insuree memory insuree;
         for (uint256 i = 0; i < flightInsurees[flightKey].length; i++) {
-            uint256 currentBalance = insureesBalance[flightInsurees[flightKey][i]];
+            insuree = insureesBalance[flightInsurees[flightKey][i]];
+            uint256 currentBalance = insuree.balance;
             uint256 newBalance = currentBalance.mul(numerator).div(denominator);
-            insureesBalance[flightInsurees[flightKey][i]] = newBalance;
+            insuree.isCredited = true;
+            insuree.balance = newBalance;
+            insureesBalance[flightInsurees[flightKey][i]] = insuree;
         }
         delete flightInsurees[flightKey];
     }
@@ -202,9 +212,9 @@ contract FlightSuretyData {
     */
     function withdraw(address payable insuree) external requireIsOperational requireAppContractOwner
     {
-        require(insureesBalance[insuree] > 0, "Insuree has no balance.");
-        uint256 value = insureesBalance[insuree];
-        insureesBalance[insuree] = 0;
+        require(insureesBalance[insuree].balance > 0, "Insuree has no balance.");
+        uint256 value = insureesBalance[insuree].balance;
+        insureesBalance[insuree].balance = 0;
         insuree.transfer(value);
     }
 
@@ -233,7 +243,10 @@ contract FlightSuretyData {
     function getInsureeBalance(address insuree) external view requireIsOperational
     returns(uint256)
     {
-        return insureesBalance[insuree];
+        if(insureesBalance[insuree].isCredited)
+            return insureesBalance[insuree].balance;
+        else
+            return uint256(0);
     }
 
     /**
@@ -242,6 +255,6 @@ contract FlightSuretyData {
     */
     fallback() external payable
     {
-        //fund();
+        //this.fund{value:msg.value}(msg.sender, msg.value);
     }
 }
