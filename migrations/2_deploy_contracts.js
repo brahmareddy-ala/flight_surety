@@ -15,8 +15,9 @@ module.exports = function(deployer, network, accounts) {
                             dataAddress: FlightSuretyData.address,
                             appAddress: FlightSuretyApp.address,
                             firstAirline: firstAirline,
-                            oracleInitialIndex: 11,
-                            oracleLasIndex: 30
+                            oracleInitialIndex: 1,
+                            oracleLastIndex: 25,
+                            gas:300000
                         }
                     }
                     fs.writeFileSync(__dirname + '/../src/dapp/config.json',JSON.stringify(config, null, '\t'), 'utf-8');
