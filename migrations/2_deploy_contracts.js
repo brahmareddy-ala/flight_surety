@@ -17,7 +17,7 @@ module.exports = function(deployer, network, accounts) {
                             firstAirline: firstAirline,
                             oracleInitialIndex: 1,
                             oracleLastIndex: 25,
-                            gas:30000000
+                            gas:6721975
                         }
                     }
                     fs.writeFileSync(__dirname + '/../src/dapp/config.json',JSON.stringify(config, null, '\t'), 'utf-8');
