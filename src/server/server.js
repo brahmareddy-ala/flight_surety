@@ -56,7 +56,9 @@ flightSuretyApp.events.OracleRequest({
         const timestamp = event.returnValues.timestamp;
 
         for(let a = oracleInitialIndex; a <= oracleLastIndex; a++) {
-          flightSuretyApp.methods.getMyIndexes().call({from: accounts[a]}).then((error, result) => {
+          flightSuretyApp.methods.getMyIndexes().call({from: accounts[a]}).then((result) => {
+            console.log(result);
+            if(result) {
             for (let i = 0; i < result.length; i++) {
               if (result[i] == index) {
                 flightSuretyApp.methods
@@ -65,6 +67,7 @@ flightSuretyApp.events.OracleRequest({
                 });
               }
             }
+          }
           });
         }
       }
