@@ -14,7 +14,6 @@ export default class Contract {
         this.appAddress = config.appAddress;
         this.firstAirline = config.firstAirline;
         this.fund(this.firstAirline, this.web3.utils.toWei("10", "ether"), (error, result) => {
-            console.log(result.airline + ' ' + result.amount);
         });
         this.initialize(callback);
         this.owner = null;
@@ -34,9 +33,6 @@ export default class Contract {
             
             while(self.airlines.length < 5) {
                 self.airlines.push(accts[counter++]);
-                this.fund(accts[counter++], this.web3.utils.toWei("10", "ether"), (error, result) => {
-                    console.log(result.airline + ' ' + result.amount);
-                });
             }
 
             while(self.passengers.length < 5) {
@@ -106,7 +102,7 @@ export default class Contract {
         } 
         self.flightSuretyApp.methods
             .buy(self.firstAirline, payload.flight, payload.timestamp)
-            .send({ from: payload.insuree, value: this.web3.utils.toWei(payload.value, "ether"), gasPrice:self.gasPrice}, (error, result) => {
+            .send({ from: payload.insuree, value: this.web3.utils.toWei(payload.value, "ether"), gas:self.gas}, (error, result) => {
                 callback(error, payload);
             });
     }
@@ -128,7 +124,7 @@ export default class Contract {
         } 
         self.flightSuretyApp.methods
             .withdraw()
-            .send({ from: payload.passenger, gas: self.gas, gasPrice: self.gasPrice }, (error, result) => {
+            .send({ from: payload.passenger, gas: self.gas }, (error, result) => {
                 callback(error, payload);
             });
     }
