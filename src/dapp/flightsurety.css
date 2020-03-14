@@ -18,7 +18,7 @@ body {
 
 .top-21 {
     margin-top: 20px;
-    margin-left: 120px;
+    margin-left: 100px;
 }
 
 h5 {
@@ -41,7 +41,14 @@ section {
 label.form {
     font-size: 14px;
     margin-right: 20px;
+    margin-top: auto;
 }
 input {
     margin-right: 30px;
+}
+
+btn.btn-primary {
+    font-size: 14px;
+    margin-left: 20px;
+    margin-top: auto;
 }
