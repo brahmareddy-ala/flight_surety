@@ -1,11 +1,11 @@
 {
 	"localhost": {
 		"url": "http://localhost:7545",
-		"dataAddress": "0xaCa2f585e6F1C0e9b8939492Ffd5685F9da5F758",
-		"appAddress": "0x3EE4743fCEF5839f41C81Cd03a7d4bA77bC68D5d",
+		"dataAddress": "0xDde589B64c5Fc9A4B2fAafA5D5E4a974C9D98DC9",
+		"appAddress": "0x3f9464C1646cFEC0aF296f146809140767891270",
 		"firstAirline": "0xf0Ef2F0d369D46ffB8a64ff24b2797f05d54dF7e",
 		"oracleInitialIndex": 1,
 		"oracleLastIndex": 25,
-		"gas": 300000
+		"gas": 6721975
 	}
 }

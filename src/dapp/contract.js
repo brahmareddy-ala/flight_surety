@@ -19,10 +19,6 @@ export default class Contract {
         this.passengers = [];
         this.gas = config.gas;
         this.gasPrice = config.gasPrice;
-        
-        this.fund(this.firstAirline, "10", (result) => {
-            console.log(result);
-        });
     }
 
     initialize(callback) {
@@ -41,7 +37,11 @@ export default class Contract {
                 self.passengers.push(accts[counter++]);
             }
 
-            this.authorizeCaller(callback);
+            self.authorizeCaller((result) => {
+                self.fund(self.firstAirline, "10", (result) => {
+                    console.log(result);
+                });
+            })
 
             callback();
         });
