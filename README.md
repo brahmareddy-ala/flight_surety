@@ -34,6 +34,11 @@ Deploy the contents of the ./dapp folder
 Libraries used in this project:
 
 Truffle v5.1.15 (core: 5.1.15)
+
 Solidity - ^0.6.0 (solc-js)
+
 Node v10.16.3
+
 Web3.js v1.2.1
+
+openzeppelin-solidity ^3.0.0-beta.0
