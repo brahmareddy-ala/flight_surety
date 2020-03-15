@@ -33,26 +33,7 @@ Deploy the contents of the ./dapp folder
 
 Libraries used in this project:
 
-"openzeppelin-solidity": "^3.0.0-beta.0",
-
-"rimraf": "^3.0.2",
-
-"solc": "0.6.0",
-
-"truffle": "5.1.15",
-
-"truffle-assertions": "^0.9.2",
-
-"truffle-hdwallet-provider": "1.0.2",
-
-"web3": "^1.2.6",
-
-"webpack": "^4.35.2",
-
-"webpack-cli": "^3.3.6",
-
-"webpack-dev-server": "3.7.2",
-
-"webpack-node-externals": "1.7.2",
-
-"mkdirp": "^1.0.3"
+Truffle v5.1.15 (core: 5.1.15)
+Solidity - ^0.6.0 (solc-js)
+Node v10.16.3
+Web3.js v1.2.1
