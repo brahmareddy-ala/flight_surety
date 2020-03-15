@@ -31,7 +31,7 @@ To build dapp for prod:
 
 Deploy the contents of the ./dapp folder
 
-Packages used in this project:
+Libraries used in this project:
 
 "openzeppelin-solidity": "^3.0.0-beta.0",
 
