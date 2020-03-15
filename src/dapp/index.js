@@ -15,10 +15,10 @@ import './flightsurety.css';
             status('Operational Status', 'Check if contract is operational', [ { label: 'Operational Status', error: error, value: result} ]);
         });
     
-        contract.authorizeCaller((error, result) => {
+        /*contract.authorizeCaller((error, result) => {
             //console.log(error,result);
             //status('Authorization Status', 'Check if contract is authorized', [ { label: 'Authorization Status', error: error, value: result.authorized} ]);
-        });
+        });*/
 
         // User-submitted transaction
         /*DOM.elid('submit-funds').addEventListener('click', () => {

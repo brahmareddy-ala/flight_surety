@@ -13,14 +13,16 @@ export default class Contract {
         this.flightSuretyData = new this.web3.eth.Contract(FlightSuretyData.abi, config.dataAddress);
         this.appAddress = config.appAddress;
         this.firstAirline = config.firstAirline;
-        this.fund(this.firstAirline, this.web3.utils.toWei("10", "ether"), (error, result) => {
-        });
         this.initialize(callback);
         this.owner = null;
         this.airlines = [];
         this.passengers = [];
         this.gas = config.gas;
-        this.gasPrice = config.gasPrice
+        this.gasPrice = config.gasPrice;
+        
+        this.fund(this.firstAirline, "10", (result) => {
+            console.log(result);
+        });
     }
 
     initialize(callback) {
@@ -38,6 +40,8 @@ export default class Contract {
             while(self.passengers.length < 5) {
                 self.passengers.push(accts[counter++]);
             }
+
+            this.authorizeCaller(callback);
 
             callback();
         });
