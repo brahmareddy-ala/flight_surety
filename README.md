@@ -1,6 +1,6 @@
 # flight_surety
 
-FlightSurety is a sample application project for Flight Delay Insurance for Passengers.
+FlightSurety is a sample application for Flight Delay Insurance for Passengers.
 
 This repository contains Smart Contract code in Solidity (using Truffle), tests (also using Truffle), dApp scaffolding (using HTML, CSS and JS) and server app scaffolding.
 
